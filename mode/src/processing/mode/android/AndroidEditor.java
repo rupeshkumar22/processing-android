@@ -85,7 +85,7 @@ public class AndroidEditor extends JavaEditor {
     androidMode.resetUserSelection();
     androidMode.checkSDK(this);
 
-//    initDebugger();
+
 
     androidTools = loadAndroidTools();
     addToolsToMenu();
@@ -174,8 +174,8 @@ public class AndroidEditor extends JavaEditor {
           handleStop();
         }
       });
-//    return buildSketchMenu(new JMenuItem[] { buildDebugMenu(), runItem, presentItem, stopItem });
-    return buildSketchMenu(new JMenuItem[] { runItem, presentItem, stopItem });
+    return buildSketchMenu(new JMenuItem[] { buildDebugMenu(), runItem, presentItem, stopItem });
+//    return buildSketchMenu(new JMenuItem[] { runItem, presentItem, stopItem });
   }
 
 
@@ -307,6 +307,10 @@ public class AndroidEditor extends JavaEditor {
   }
 
   private JMenu buildDebugMenu() {
+    // First debugger must be instantiated here, after that menu will be built
+    // otherwise it shows debugger as null in the error
+    
+    initDebugger();
     debugMenu = new JMenu(Language.text("menu.debug"));
     debugger.populateMenu(debugMenu);
     return debugMenu;
@@ -726,10 +730,14 @@ public class AndroidEditor extends JavaEditor {
   
   private void initDebugger() {
     debugger = new AndroidDebugger(this, androidMode);
-    // Set saved breakpoints when sketch is opened for the first time
-    for (LineID lineID : stripBreakpointComments()) {
-      debugger.setBreakpoint(lineID);
-    }
+
+// The following lines are commented as it throws null pointer exception as sketch was not instantiated
+// before the execution of the following, we will do something about it later on but let's atleast run the debugger first
+
+//    // Set saved breakpoints when sketch is opened for the first time
+//    for (LineID lineID : stripBreakpointComments()) {
+//      debugger.setBreakpoint(lineID);
+//    }
     super.debugger = debugger;
     
   }  
